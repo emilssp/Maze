@@ -39,6 +39,21 @@ class QueueFrontier(StackFrontier):
             self.frontier = self.frontier[1:]
             return node
 
+class Astar_frontier(StackFrontier):
+
+    def remove(self,end,start):
+        if self.empty():
+            raise Exception("Empty")
+        else:
+            node = self.frontier
+            a_star=[]
+            for i in range(0,len(node)):
+                a_star.append(abs(node[i].state[0]-start[0])+abs(node[i].state[1]-start[1])+abs(node[i].state[0]-end[0])+abs(node[i].state[1]-end[1]))
+            node = self.frontier[a_star.index(min(a_star))]
+            self.frontier.remove(self.frontier[a_star.index(min(a_star))])
+            return node
+
+
 
 class Maze():
 
@@ -120,7 +135,7 @@ class Maze():
         self.number_explored = 0
 
         start = Node(state=self.start, parent=None, action=None)
-        frontier = QueueFrontier()
+        frontier =  Astar_frontier()
         frontier.add(start)
 
         self.explored = set() #empty explored set
@@ -130,7 +145,7 @@ class Maze():
             if frontier.empty():
                 raise Exception("No solution")
 
-            node = frontier.remove()
+            node = frontier.remove(start=self.start,end=self.end)
             self.number_explored += 1
 
             if node.state == self.end:
